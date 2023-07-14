@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using PdfGenerator.Extensions;
 using PdfGenerator.Services;
 using PdfGenerator.Services.Meta;
@@ -28,6 +21,8 @@ namespace PdfGenerator
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            services.AddSwaggerGen();
             services.AddScoped<ITemplateService, RazorViewsTemplateService>();
         }
 
@@ -36,6 +31,8 @@ namespace PdfGenerator
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseRouting();

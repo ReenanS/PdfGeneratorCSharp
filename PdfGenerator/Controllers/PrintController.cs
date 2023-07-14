@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PdfGenerator.Extensions;
 using PdfGenerator.Services.Meta;
 using PdfGenerator.ViewModels;
 using PuppeteerSharp;
 using PuppeteerSharp.Media;
+using System;
+using System.Threading.Tasks;
 
 namespace PdfGenerator.Controllers
 {
@@ -23,23 +22,22 @@ namespace PdfGenerator.Controllers
         [HttpGet]
         public async Task<IActionResult> Print()
         {
-            var model = new InvoiceViewModel
+            var model = new ContratoViewModel
             {
-                CreatedAt = DateTime.Now,
-                Due = DateTime.Now.AddDays(10),
-                Id = 12533,
-                AddressLine = "Jumpy St. 99",
-                City = "Trampoline",
-                ZipCode = "22-113",
-                CompanyName = "Jumping Rabbit Co.",
-                PaymentMethod = "Check",
-                Items = new List<InvoiceItemViewModel>
-                {
-                    new InvoiceItemViewModel("Website design", 621.99m),
-                    new InvoiceItemViewModel("Website creation", 1231.99m)
-                }
+                NomeCliente = "João da Silva",
+                RgCliente = "12345678",
+                CpfCliente = "123.456.789-00",
+                EnderecoCliente = "Rua Teste, 123",
+                DescricaoConsorcio = "Veículo",
+                ValorConsorcio = 3000,
+                Parcelas = 48,
+                ValorParcela = 625,
+                DuracaoConsorcio = 48,
+                MesContemplacao = "Dezembro 2026",
+                LocalData = "São Paulo, 13 de Julho de 2023"
             };
-            var html = await _templateService.RenderAsync("Templates/InvoiceTemplate", model);
+
+            var html = await _templateService.RenderAsync("Templates/Contrato", model);
             await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
                 Headless = true,
@@ -53,7 +51,7 @@ namespace PdfGenerator.Controllers
                 Format = PaperFormat.A4,
                 PrintBackground = true
             });
-            return File(pdfContent, "application/pdf", $"Invoice-{model.Id}.pdf");
+            return File(pdfContent, "application/pdf", $"Invoice-{model.NomeCliente}.pdf");
         }
     }
 }

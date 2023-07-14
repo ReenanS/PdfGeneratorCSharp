@@ -1,8 +1,8 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using PuppeteerSharp;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace PdfGenerator.Extensions
 {
@@ -13,7 +13,7 @@ namespace PdfGenerator.Extensions
             IWebHostEnvironment hostingEnvironment)
         {
             var downloadPath = Path.Join(hostingEnvironment.ContentRootPath, @"\puppeteer");
-            var browserOptions = new BrowserFetcherOptions {Path = downloadPath};
+            var browserOptions = new BrowserFetcherOptions { Path = downloadPath };
             var browserFetcher = new BrowserFetcher(browserOptions);
             _executablePath = browserFetcher.GetExecutablePath(BrowserFetcher.DefaultRevision);
             await browserFetcher.DownloadAsync(BrowserFetcher.DefaultRevision);
