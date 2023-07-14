@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PdfGenerator.Extensions;
 using PdfGenerator.Services.Meta;
 using PdfGenerator.ViewModels;
-using PuppeteerSharp;
-using PuppeteerSharp.Media;
+using PdfSharpCore;
+using PdfSharpCore.Pdf;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
-namespace PdfGenerator.Controllers
+namespace PdfGeneratorRenanzinho.Controllers
 {
     [Route("/api/print")]
     public class PrintController : ControllerBase
@@ -38,20 +38,27 @@ namespace PdfGenerator.Controllers
             };
 
             var html = await _templateService.RenderAsync("Templates/Contrato", model);
-            await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+
+            // Gerar o PDF
+
+            var document = new PdfDocument();
+
+            // Gerando PDF a partir de HTML
+            TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.AddPdfPages(document, html, PageSize.A4);
+
+            byte[] response = null;
+
+            using (MemoryStream ms = new MemoryStream())
             {
-                Headless = true,
-                ExecutablePath = PuppeteerExtensions.ExecutablePath
-            });
-            await using var page = await browser.NewPageAsync();
-            await page.EmulateMediaTypeAsync(MediaType.Screen);
-            await page.SetContentAsync(html);
-            var pdfContent = await page.PdfStreamAsync(new PdfOptions
-            {
-                Format = PaperFormat.A4,
-                PrintBackground = true
-            });
-            return File(pdfContent, "application/pdf", $"Invoice-{model.NomeCliente}.pdf");
+                document.Save(ms);
+                response = ms.ToArray();
+            }
+
+            string Filename = "Invoice-" + model.NomeCliente + ".pdf";
+
+            // Retorna o PDF como um arquivo
+            return File(response, "application/pdf", Filename);
+
         }
     }
 }

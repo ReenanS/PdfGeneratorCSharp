@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PdfGenerator.Extensions;
 using PdfGenerator.Services;
 using PdfGenerator.Services.Meta;
 
@@ -38,7 +37,6 @@ namespace PdfGenerator
             app.UseRouting();
             app.UseStaticFiles();
             app.UseAuthorization();
-            app.PreparePuppeteerAsync(env).GetAwaiter().GetResult();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
