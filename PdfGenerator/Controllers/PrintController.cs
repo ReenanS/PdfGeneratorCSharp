@@ -37,14 +37,19 @@ namespace PdfGeneratorRenanzinho.Controllers
                 LocalData = "São Paulo, 13 de Julho de 2023"
             };
 
-            var html = await _templateService.RenderAsync("Templates/Contrato", model);
+            var caminhoPDF = "Views/Templates/ContratoAdesao.html";
+
+            var templateHtml = await System.IO.File.ReadAllTextAsync(caminhoPDF);
+
+            templateHtml = templateHtml.Replace("{NomeCliente}", model.NomeCliente);
+            templateHtml = templateHtml.Replace("{RgCliente}", model.RgCliente);
 
             // Gerar o PDF
 
             var document = new PdfDocument();
 
             // Gerando PDF a partir de HTML
-            TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.AddPdfPages(document, html, PageSize.A4);
+            TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.AddPdfPages(document, templateHtml, PageSize.A4);
 
             byte[] response = null;
 
